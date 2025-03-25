@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animation.css">
+    <link rel="stylesheet" href="css/media.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+    <link rel="icon" href="icons.png">
+</head>
+<body>
+    <div class="container">
+        <header style="padding: 20px 0; display: flex; justify-content: space-between; align-items: center;">
+            <div class="logoBlock">
+                <img class="imgLogo" src="icons.png" alt="logo">
+                <h1 style="color: var(--accent-color);">Finance Manager</h1>
+            </div>
+            <div class="user-actions">
+                <div id="authButtons">
+                    <button id="loginBtn" class="btn btn-primary">Войти</button>
+                    <button id="registerBtn" class="btn btn-success">Регистрация</button>
+                </div>
+                <div id="userProfile" class="user-menu hidden">
+                    <div class="avatar" id="userAvatar">U</div>
+                    <div class="dropdown-menu" id="userDropdown">
+                        <div class="dropdown-item" id="profileBtn"><i class="fas fa-user"></i> Профиль</div>
+                        <div class="dropdown-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main style="margin-top: 30px;" id="mainContent" class="hidden">
+            <div class="tabs">
+                <div class="tab active" data-tab="dashboard">Дашборд</div>
+                <div class="tab" data-tab="transactions">Транзакции</div>
+                <div class="tab" data-tab="goals">Цели</div>
+                <div class="tab" data-tab="analytics">Аналитика</div>
+                <div class="tab" data-tab="reports">Отчеты</div>
+            </div>
+
+            <div class="tab-content active" id="dashboard-tab">
+                <div class="dashboard">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Баланс</h3>
+                        </div>
+                        <div class="card-body">
+                            <h2 id="totalBalance">0 ₽</h2>
+                            <p>Доходы: <span id="totalIncome" class="transaction-income">0 ₽</span></p>
+                            <p>Расходы: <span id="totalExpense" class="transaction-expense">0 ₽</span></p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Последние транзакции</h3>
+                            <button class="btn btn-primary btn-sm" id="addTransactionBtn">Добавить</button>
+                        </div>
+                        <div class="card-body">
+                            <ul class="transaction-list" id="recentTransactions">
+                                <li>Нет транзакций</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Активные цели</h3>
+                            <button class="btn btn-primary btn-sm" id="addGoalBtn">Добавить</button>
+                        </div>
+                        <div class="card-body">
+                            <div id="activeGoals">
+                                <p>Нет активных целей</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Уведомления</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="notifications">
+                                <div class="notification notification-info">
+                                    <span>Добро пожаловать в финансовый менеджер!</span>
+                                    <i class="fas fa-times" style="cursor: pointer;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="transactions-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Все транзакции</h3>
+                        <div>
+                            <button class="btn btn-primary btn-sm" id="addTransactionBtn2">Добавить</button>
+                            <button class="btn btn-success btn-sm" id="importTransactionsBtn">Импорт</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="transactionFilter">Фильтр:</label>
+                            <select id="transactionFilter">
+                                <option value="all">Все</option>
+                                <option value="income">Доходы</option>
+                                <option value="expense">Расходы</option>
+                                <option value="food">Еда</option>
+                                <option value="transport">Транспорт</option>
+                                <option value="entertainment">Развлечения</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+                        <ul class="transaction-list" id="allTransactions">
+                            <li>Нет транзакций</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="goals-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Финансовые цели</h3>
+                        <button class="btn btn-primary btn-sm" id="addGoalBtn2">Добавить</button>
+                    </div>
+                    <div class="card-body">
+                        <div id="goalsList">
+                            <p>Нет целей</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="analytics-tab">
+                <div class="dashboard">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Расходы по категориям</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="expensesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Динамика доходов/расходов</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="incomeExpenseChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Рекомендации</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="recommendations">
+                                <p>Анализ ваших расходов появится здесь после добавления транзакций.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="reports-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Отчеты</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="reportPeriod">Период:</label>
+                            <select id="reportPeriod">
+                                <option value="month">Месяц</option>
+                                <option value="quarter">Квартал</option>
+                                <option value="year">Год</option>
+                                <option value="custom">Произвольный</option>
+                            </select>
+                        </div>
+                        <div id="customDateRange" class="hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div class="form-group">
+                                <label for="startDate">Начальная дата:</label>
+                                <input type="date" id="startDate">
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate">Конечная дата:</label>
+                                <input type="date" id="endDate">
+                            </div>
+                        </div>
+                        <button id="generatePdfBtn" class="btn btn-primary">
+                            <i class="fas fa-file-pdf"></i> Скачать PDF
+                        </button>
+                        <button id="generateExcelBtn" class="btn btn-success">
+                            <i class="fas fa-file-excel"></i> Скачать Excel
+                        </button>
+                        <button id="generateCsvBtn" class="btn btn-warning">
+                            <i class="fas fa-file-csv"></i> Скачать CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--accent-color);">Вход в систему</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--accent-color);">Регистрация</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regName">Имя</label>
+                    <input type="text" id="regName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Пароль</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Подтвердите пароль</label>
+                    <input type="password" id="regConfirmPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--accent-color);">Добавить транзакцию</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionType">Тип</label>
+                    <select id="transactionType" required>
+                        <option value="income">Доход</option>
+                        <option value="expense">Расход</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionAmount">Сумма (₽)</label>
+                    <input type="number" id="transactionAmount" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionCategory">Категория</label>
+                    <select id="transactionCategory" required>
+                        <option value="salary">Зарплата</option>
+                        <option value="gift">Подарок</option>
+                        <option value="investment">Инвестиции</option>
+                        <option value="food">Еда</option>
+                        <option value="transport">Транспорт</option>
+                        <option value="entertainment">Развлечения</option>
+                        <option value="utilities">Коммунальные услуги</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDate">Дата</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDescription">Описание</label>
+                    <textarea id="transactionDescription" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="goalModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--accent-color);">Новая финансовая цель</h2>
+            <form id="goalForm">
+                <div class="form-group">
+                    <label for="goalName">Название цели</label>
+                    <input type="text" id="goalName" required>
+                </div>
+                <div class="form-group">
+                    <label for="goalAmount">Целевая сумма (₽)</label>
+                    <input type="number" id="goalAmount" required>
+                </div>
+                <div class="form-group">
+                    <label for="goalCurrentAmount">Текущая сумма (₽)</label>
+                    <input type="number" id="goalCurrentAmount" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="goalDeadline">Срок</label>
+                    <input type="date" id="goalDeadline" required>
+                </div>
+                <div class="form-group">
+                    <label for="goalDescription">Описание</label>
+                    <textarea id="goalDescription" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Сохранить</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--accent-color);">Импорт транзакций</h2>
+            <form id="importForm">
+                <div class="form-group">
+                    <label for="importType">Формат файла</label>
+                    <select id="importType">
+                        <option value="csv">CSV</option>
+                        <option value="excel">Excel</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="file" id="importFile" class="file-input" accept=".csv,.xlsx,.xls">
+                    <label for="importFile" class="file-label">
+                        <i class="fas fa-file-upload"></i> Выберите файл
+                    </label>
+                    <span id="fileName">Файл не выбран</span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Импортировать</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-bottom: 20px; color: var(--accent-color);">Профиль пользователя</h2>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="profileName">Имя</label>
+                    <input type="text" id="profileName" required>
+                </div>
+                <div class="form-group">
+                    <label for="profileEmail">Email</label>
+                    <input type="email" id="profileEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="profileAvatar">Аватар</label>
+                    <input type="file" id="profileAvatar" class="file-input" accept="image/*">
+                    <label for="profileAvatar" class="file-label">
+                        <i class="fas fa-image"></i> Выберите изображение
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="profilePassword">Новый пароль (оставьте пустым, если не хотите менять)</label>
+                    <input type="password" id="profilePassword">
+                </div>
+                <div class="form-group">
+                    <label for="profileConfirmPassword">Подтвердите новый пароль</label>
+                    <input type="password" id="profileConfirmPassword">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Сохранить</button>
+            </form>
+        </div>
+    </div>
+    <div id="loading-indicator" style="display: none;">
+        <div class="spinner"></div>
+        Сохранение данных...
+    </div>
+    <!-- Библиотеки -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
