@@ -9,9 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         notifications: []
     };
 
-    // Элементы DOM
     const elements = {
-        // Кнопки
         loginBtn: document.getElementById('loginBtn'),
         registerBtn: document.getElementById('registerBtn'),
         logoutBtn: document.getElementById('logoutBtn'),
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
         importTransactionsBtn: document.getElementById('importTransactionsBtn'),
         clearDataBtn: document.getElementById('clearDataBtn'),
         
-        // Модальные окна
         loginModal: document.getElementById('loginModal'),
         registerModal: document.getElementById('registerModal'),
         transactionModal: document.getElementById('transactionModal'),
@@ -34,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
         importModal: document.getElementById('importModal'),
         profileModal: document.getElementById('profileModal'),
         
-        // Формы
         loginForm: document.getElementById('loginForm'),
         registerForm: document.getElementById('registerForm'),
         transactionForm: document.getElementById('transactionForm'),
@@ -42,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
         importForm: document.getElementById('importForm'),
         profileForm: document.getElementById('profileForm'),
         
-        // Другие элементы
         authButtons: document.getElementById('authButtons'),
         userProfile: document.getElementById('userProfile'),
         userAvatar: document.getElementById('userAvatar'),
@@ -70,11 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
         incomeExpenseChart: document.getElementById('incomeExpenseChart')
     };
 
-    // Инициализация графиков
     let expensesChartInstance = null;
     let incomeExpenseChartInstance = null;
 
-    // Функция сохранения всех данных
     function saveAllData() {
         if (state.user) {
             localStorage.setItem(`financialManagerData_${state.user.email}`, JSON.stringify({
@@ -85,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция загрузки данных
     function loadData() {
         if (!state.user) return;
         
@@ -101,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Добавляем приветственное уведомление, если нет других уведомлений
         if (state.notifications.length === 0) {
             state.notifications.push({
                 id: 1,
@@ -112,35 +103,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Закрытие модальных окон
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             this.closest('.modal').classList.remove('active');
         });
     });
 
-    // Закрытие модальных окон при клике вне их
     window.addEventListener('click', function(e) {
         if (e.target.classList.contains('modal')) {
             e.target.classList.remove('active');
         }
     });
 
-    // Показать модальное окно входа
     if (elements.loginBtn) {
         elements.loginBtn.addEventListener('click', function() {
             elements.loginModal.classList.add('active');
         });
     }
 
-    // Показать модальное окно регистрации
     if (elements.registerBtn) {
         elements.registerBtn.addEventListener('click', function() {
             elements.registerModal.classList.add('active');
         });
     }
 
-    // Показать модальное окно добавления транзакции
     [elements.addTransactionBtn, elements.addTransactionBtn2].forEach(btn => {
         if (btn) {
             btn.addEventListener('click', function() {
@@ -149,7 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Показать модальное окно добавления цели
     [elements.addGoalBtn, elements.addGoalBtn2].forEach(btn => {
         if (btn) {
             btn.addEventListener('click', function() {
@@ -158,14 +143,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Показать модальное окно импорта
     if (elements.importTransactionsBtn) {
         elements.importTransactionsBtn.addEventListener('click', function() {
             elements.importModal.classList.add('active');
         });
     }
 
-    // Показать модальное окно профиля
     if (elements.profileBtn) {
         elements.profileBtn.addEventListener('click', function() {
             if (state.user) {
@@ -176,27 +159,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Переключение вкладок
     elements.tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const tabId = this.getAttribute('data-tab');
             
-            // Удаляем активный класс у всех вкладок и контента
             elements.tabs.forEach(t => t.classList.remove('active'));
             elements.tabContents.forEach(c => c.classList.remove('active'));
             
-            // Добавляем активный класс текущей вкладке и контенту
             this.classList.add('active');
             document.getElementById(`${tabId}-tab`).classList.add('active');
             
-            // Обновляем графики при переключении на аналитику
             if (tabId === 'analytics') {
                 updateCharts();
             }
         });
     });
 
-    // Переключение пользовательского диапазона дат для отчетов
     if (elements.reportPeriod) {
         elements.reportPeriod.addEventListener('change', function() {
             if (this.value === 'custom') {
@@ -207,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Выбор файла для импорта
     if (elements.importFile) {
         elements.importFile.addEventListener('change', function() {
             if (this.files.length > 0) {
@@ -218,28 +195,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Открытие/закрытие выпадающего меню пользователя
     if (elements.userAvatar) {
         elements.userAvatar.addEventListener('click', function() {
             elements.userDropdown.classList.toggle('active');
         });
     }
 
-    // Выход из системы
     if (elements.logoutBtn) {
         elements.logoutBtn.addEventListener('click', function() {
             logout();
         });
     }
 
-    // Очистка всех данных
     if (elements.clearDataBtn) {
         elements.clearDataBtn.addEventListener('click', function() {
             clearAllData();
         });
     }
 
-    // Обработка формы входа
     if (elements.loginForm) {
         elements.loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -247,13 +220,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('password').value;
             
             if (email && password) {
-                // Проверяем, есть ли уже сохраненный пользователь
                 const savedUser = localStorage.getItem('financialManagerUser');
                 if (savedUser) {
                     try {
                         const user = JSON.parse(savedUser);
                         if (user.email === email) {
-                            // Вход с сохраненными данными
                             login(user);
                             return;
                         }
@@ -262,7 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 
-                // Если пользователь новый или данные не найдены
                 login({
                     id: Date.now(),
                     name: email.split('@')[0],
@@ -273,7 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обработка формы регистрации
     if (elements.registerForm) {
         elements.registerForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -288,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (name && email && password) {
-                // При регистрации создаем нового пользователя с пустыми данными
                 const newUser = {
                     id: Date.now(),
                     name: name,
@@ -296,10 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     avatar: null
                 };
                 
-                // Сохраняем пользователя
                 localStorage.setItem('financialManagerUser', JSON.stringify(newUser));
-                
-                // Инициализируем пустые данные для нового пользователя
                 state.transactions = [];
                 state.goals = [];
                 state.notifications = [{
@@ -311,13 +276,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 saveAllData();
                 
-                // Входим под новым пользователем
                 login(newUser);
             }
         });
     }
 
-    // Обработка формы добавления транзакции
     if (elements.transactionForm) {
         elements.transactionForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -345,7 +308,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обработка формы добавления цели
     if (elements.goalForm) {
         elements.goalForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -373,7 +335,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обработка формы импорта
     if (elements.importForm) {
         elements.importForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -383,7 +344,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    // Простая имитация импорта
                     const transactions = [
                         {
                             id: Date.now() + 1,
@@ -416,7 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обработка формы профиля
     if (elements.profileForm) {
         elements.profileForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -453,76 +412,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Генерация PDF отчета
     if (elements.generatePdfBtn) {
         elements.generatePdfBtn.addEventListener('click', function() {
             generatePdfReport();
         });
     }
 
-    // Генерация Excel отчета
     if (elements.generateExcelBtn) {
         elements.generateExcelBtn.addEventListener('click', function() {
             generateExcelReport();
         });
     }
 
-    // Генерация CSV отчета
     if (elements.generateCsvBtn) {
         elements.generateCsvBtn.addEventListener('click', function() {
             generateCsvReport();
         });
     }
 
-    // Фильтрация транзакций
     if (elements.transactionFilter) {
         elements.transactionFilter.addEventListener('change', function() {
             renderTransactions();
         });
     }
 
-    // Функция входа в систему
     function login(user) {
         state.user = user;
         localStorage.setItem('financialManagerUser', JSON.stringify(user));
         
-        // Загружаем сохраненные данные для этого пользователя
         loadData();
         
-        // Обновляем UI
         elements.authButtons.classList.add('hidden');
         elements.userProfile.classList.remove('hidden');
         elements.mainContent.classList.remove('hidden');
         
-        // Обновляем аватар
         updateUserAvatar();
         
-        // Закрываем модальные окна
         elements.loginModal.classList.remove('active');
         elements.registerModal.classList.remove('active');
         
-        // Рендерим данные
         renderAllData();
         
         addNotification('success', `Добро пожаловать, ${user.name}!`);
     }
 
-    // Функция выхода из системы
     function logout() {
-        // Не очищаем данные пользователя, только скрываем UI элементы
         elements.authButtons.classList.remove('hidden');
         elements.userProfile.classList.add('hidden');
         elements.mainContent.classList.add('hidden');
         elements.userDropdown.classList.remove('active');
         
-        // Очищаем формы
         document.getElementById('loginForm').reset();
         document.getElementById('registerForm').reset();
         
         addNotification('info', 'Вы вышли из системы. Ваши данные сохранены.');
     }
 
-    // Функция очистки всех данных
     function clearAllData() {
         if (confirm('Вы уверены, что хотите удалить ВСЕ данные? Это действие нельзя отменить.')) {
             state.transactions = [];
@@ -538,28 +483,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция добавления транзакции
     function addTransaction(transaction) {
         state.transactions.push(transaction);
         saveAllData();
         renderAllData();
         
-        // Добавляем уведомление о новой транзакции
         const typeText = transaction.type === 'income' ? 'доход' : 'расход';
         addNotification('info', `Добавлен ${typeText} в категории "${getCategoryName(transaction.category)}"`);
     }
 
-    // Функция добавления цели
     function addGoal(goal) {
         state.goals.push(goal);
         saveAllData();
         renderAllData();
         
-        // Добавляем уведомление о новой цели
         addNotification('info', `Добавлена новая цель: "${goal.name}"`);
     }
 
-    // Функция добавления уведомления
     function addNotification(type, message) {
         const notification = {
             id: Date.now(),
@@ -573,7 +513,6 @@ document.addEventListener('DOMContentLoaded', function() {
         renderNotifications();
     }
 
-    // Функция обновления всех данных на странице
     function renderAllData() {
         renderBalance();
         renderTransactions();
@@ -582,7 +521,6 @@ document.addEventListener('DOMContentLoaded', function() {
         generateRecommendations();
     }
 
-    // Функция обновления баланса
     function renderBalance() {
         const totalIncome = state.transactions
             .filter(t => t.type === 'income')
@@ -599,11 +537,9 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.totalExpense.textContent = `${totalExpense.toLocaleString()} ₽`;
     }
 
-    // Функция отображения транзакций
     function renderTransactions() {
         const filter = elements.transactionFilter ? elements.transactionFilter.value : 'all';
         
-        // Фильтрация транзакций
         let filteredTransactions = [...state.transactions];
         
         if (filter === 'income') {
@@ -614,13 +550,10 @@ document.addEventListener('DOMContentLoaded', function() {
             filteredTransactions = filteredTransactions.filter(t => t.category === filter);
         }
         
-        // Сортировка по дате (новые сначала)
         filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
         
-        // Отображаем последние 5 транзакций для дашборда
         const recentTransactions = filteredTransactions.slice(0, 5);
         
-        // Очищаем списки
         elements.recentTransactions.innerHTML = '';
         elements.allTransactions.innerHTML = '';
         
@@ -643,7 +576,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция создания элемента транзакции
     function createTransactionElement(transaction) {
         const li = document.createElement('li');
         li.className = 'transaction-item';
@@ -663,12 +595,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return li;
     }
 
-    // Функция отображения целей
     function renderGoals() {
-        // Сортировка по сроку (ближайшие сначала)
         const sortedGoals = [...state.goals].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
         
-        // Очищаем списки
         elements.activeGoals.innerHTML = '';
         elements.goalsList.innerHTML = '';
         
@@ -676,7 +605,6 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.activeGoals.innerHTML = '<p>Нет активных целей</p>';
             elements.goalsList.innerHTML = '<p>Нет целей</p>';
         } else {
-            // Отображаем активные цели (те, у которых срок еще не наступил)
             const activeGoals = sortedGoals.filter(g => new Date(g.deadline) >= new Date());
             
             if (activeGoals.length === 0) {
@@ -687,8 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     elements.activeGoals.appendChild(goalElement);
                 });
             }
-            
-            // Отображаем все цели
+
             sortedGoals.forEach(g => {
                 const goalElement = createGoalElement(g);
                 elements.goalsList.appendChild(goalElement);
@@ -696,18 +623,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция создания элемента цели
     function createGoalElement(goal) {
-        const progress = (goal.currentAmount / goal.targetAmount) * 100;
-        const daysLeft = Math.ceil((new Date(goal.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+        const currentAmount = goal.currentAmount || 0;
+        const targetAmount = goal.targetAmount || 0;
+        const progress = targetAmount > 0 ? (currentAmount / targetAmount) * 100 : 0;
         
+        const daysLeft = Math.ceil((new Date(goal.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+    
         const div = document.createElement('div');
         div.className = 'goal-item';
         div.style.marginBottom = '20px';
         
         div.innerHTML = `
             <h4>${goal.name}</h4>
-            <p>${goal.currentAmount.toLocaleString()} ₽ из ${goal.targetAmount.toLocaleString()} ₽</p>
+            <p>${currentAmount.toLocaleString()} ₽ из ${targetAmount.toLocaleString()} ₽</p>
             <div class="goal-progress">
                 <div class="progress-bar" style="width: ${Math.min(progress, 100)}%"></div>
             </div>
@@ -719,7 +648,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return div;
     }
 
-    // Функция отображения уведомлений
     function renderNotifications() {
         elements.notificationsList.innerHTML = '';
         
@@ -735,7 +663,6 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.notificationsList.appendChild(notificationElement);
         });
         
-        // Добавляем обработчики для кнопок закрытия уведомлений
         document.querySelectorAll('.notification .fa-times').forEach(btn => {
             btn.addEventListener('click', function() {
                 const id = parseInt(this.getAttribute('data-id'));
@@ -746,9 +673,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Функция обновления графиков
     function updateCharts() {
-        // График расходов по категориям
         const expensesByCategory = {};
         state.transactions
             .filter(t => t.type === 'expense')
@@ -794,7 +719,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // График динамики доходов/расходов по дням
         const incomeByDate = {};
         const expenseByDate = {};
         
@@ -854,7 +778,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция генерации рекомендаций
     function generateRecommendations() {
         if (state.transactions.length === 0) {
             elements.recommendations.innerHTML = '<p>Анализ ваших расходов появится здесь после добавления транзакций.</p>';
@@ -900,7 +823,6 @@ document.addEventListener('DOMContentLoaded', function() {
             recommendationsHTML += `<li>Больше всего вы тратите на "${getCategoryName(maxExpenseCategory)}" - ${maxExpenseAmount.toLocaleString()} ₽. Возможно, стоит пересмотреть эти расходы.</li>`;
         }
         
-        // Проверка целей
         state.goals.forEach(goal => {
             const daysLeft = Math.ceil((new Date(goal.deadline) - new Date()) / (1000 * 60 * 60 * 24));
             const amountLeft = goal.targetAmount - goal.currentAmount;
@@ -916,7 +838,6 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.recommendations.innerHTML = recommendationsHTML;
     }
 
-    // Функция генерации PDF отчета
     function generatePdfReport() {
         const doc = new jsPDF();
         
@@ -1119,14 +1040,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Проверяем, есть ли сохраненный пользователь при загрузке страницы
     const savedUser = localStorage.getItem('financialManagerUser');
     if (savedUser) {
         try {
             const user = JSON.parse(savedUser);
             
             if (user && typeof user === 'object' && user.email) {
-                // Проверяем аватар, если он есть
                 if (user.avatar && typeof user.avatar === 'string') {
                     const img = new Image();
                     img.onload = function() {
